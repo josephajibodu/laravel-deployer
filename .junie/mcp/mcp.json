@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/cremirdevio/Library/Application Support/Herd/bin/php82",
+            "args": [
+                "/Users/cremirdevio/software-projects/CREMIR.CO/laravel-deployer/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
