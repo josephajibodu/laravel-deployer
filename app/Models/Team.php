@@ -80,6 +80,46 @@ class Team extends Model
         return $this->hasMany(TeamInvitation::class);
     }
 
+    public function serverProviders(): HasMany
+    {
+        return $this->hasMany(ServerProvider::class);
+    }
+
+    public function servers(): HasMany
+    {
+        return $this->hasMany(Server::class);
+    }
+
+    public function sshKeys(): HasMany
+    {
+        return $this->hasMany(SshKey::class);
+    }
+
+    public function sourceControls(): HasMany
+    {
+        return $this->hasMany(SourceControl::class);
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    public function databases(): HasMany
+    {
+        return $this->hasMany(Database::class);
+    }
+
+    public function cronJobs(): HasMany
+    {
+        return $this->hasMany(CronJob::class);
+    }
+
+    public function daemons(): HasMany
+    {
+        return $this->hasMany(Daemon::class);
+    }
+
     public function removeUser(User $user): void
     {
         if ($user->current_team_id === $this->id) {
