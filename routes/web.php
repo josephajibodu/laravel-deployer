@@ -17,6 +17,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->parameters(['server-providers' => 'serverProvider']);
     Route::post('server-providers/{serverProvider}/test', [App\Http\Controllers\ServerProviderController::class, 'test'])
         ->name('server-providers.test');
+
+    // Servers
+    Route::resource('servers', App\Http\Controllers\ServerController::class);
+    Route::post('servers/{server}/test', [App\Http\Controllers\ServerController::class, 'test'])
+        ->name('servers.test');
 });
 
 require __DIR__.'/settings.php';
