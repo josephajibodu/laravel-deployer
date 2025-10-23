@@ -1,10 +1,9 @@
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { Edit, Plus, Server, TestTube, Trash2 } from 'lucide-react';
+import { Plus, Server, TestTube } from 'lucide-react';
 import { useState } from 'react';
 
 interface ServerProvider {
@@ -95,65 +94,49 @@ export default function Index({ servers }: ServersIndexProps) {
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="flex flex-col gap-4">
                         {servers.map((server) => (
-                            <Card key={server.id}>
-                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                    <CardTitle className="text-lg">{server.name}</CardTitle>
-                                    <Server className="h-4 w-4 text-muted-foreground" />
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="space-y-2">
+                            <Link key={server.id} href={`/servers/${server.id}`}>
+                                <Card className="cursor-pointer p-0 transition-colors hover:bg-muted/50">
+                                    <CardContent className="p-3">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Type</span>
-                                            <Badge variant="secondary" className={serverTypeColors[server.server_type] || serverTypeColors.app}>
-                                                {server.server_type}
-                                            </Badge>
+                                            <div className="flex items-center space-x-4">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
+                                                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">
+                                                        {server.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-semibold">{server.name}</h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {server.ip_address} · {server.server_type} · PHP {server.php_version} · MySQL 8
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center space-x-4">
+                                                <div className="text-right text-sm text-muted-foreground">
+                                                    <p>{server.sites?.length || 0} sites · 0 background process · 0 scheduled jobs</p>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleTestConnection(server.id);
+                                                        }}
+                                                        disabled={testingServer === server.id}
+                                                    >
+                                                        <TestTube className="mr-2 h-4 w-4" />
+                                                        {testingServer === server.id ? 'Testing...' : 'Test'}
+                                                    </Button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Provider</span>
-                                            <span className="text-sm font-medium">{server.server_provider.name}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Region</span>
-                                            <span className="text-sm font-medium">{server.region}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Status</span>
-                                            <Badge variant="secondary" className={statusColors[server.connection_status] || statusColors.pending}>
-                                                {server.connection_status}
-                                            </Badge>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-muted-foreground">Provisioned</span>
-                                            <Badge variant={server.provisioned ? 'default' : 'secondary'}>{server.provisioned ? 'Yes' : 'No'}</Badge>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                                <CardContent className="pt-0">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => handleTestConnection(server.id)}
-                                            disabled={testingServer === server.id}
-                                        >
-                                            <TestTube className="mr-2 h-4 w-4" />
-                                            {testingServer === server.id ? 'Testing...' : 'Test'}
-                                        </Button>
-                                        <Link href={`/servers/${server.id}/edit`}>
-                                            <Button variant="outline" size="sm">
-                                                <Edit className="mr-2 h-4 w-4" /> Edit
-                                            </Button>
-                                        </Link>
-                                        <Link href={`/servers/${server.id}`} method="delete" as="button">
-                                            <Button variant="destructive" size="sm">
-                                                <Trash2 className="mr-2 h-4 w-4" /> Delete
-                                            </Button>
-                                        </Link>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         ))}
                     </div>
                 )}
