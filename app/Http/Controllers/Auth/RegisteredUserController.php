@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -41,6 +42,16 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        // Create a personal team for the user
+        $team = Team::create([
+            'user_id' => $user->id,
+            'name' => $user->name."'s Team",
+            'personal_team' => true,
+        ]);
+
+        // Set the user's current team
+        $user->update(['current_team_id' => $team->id]);
 
         event(new Registered($user));
 
