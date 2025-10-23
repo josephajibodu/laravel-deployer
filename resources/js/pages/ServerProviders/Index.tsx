@@ -1,11 +1,11 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
-import { AlertCircle, Edit, Plus, Server, TestTube, Trash2 } from 'lucide-react';
+import { AlertCircle, Plus, Server, TestTube } from 'lucide-react';
 import { useState } from 'react';
 
 interface ServerProvider {
@@ -60,12 +60,6 @@ export default function ServerProvidersIndex({ serverProviders }: ServerProvider
         );
     };
 
-    const handleDelete = (providerId: number) => {
-        if (confirm('Are you sure you want to delete this server provider?')) {
-            router.delete(`/server-providers/${providerId}`);
-        }
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Server Providers" />
@@ -101,69 +95,52 @@ export default function ServerProvidersIndex({ serverProviders }: ServerProvider
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="flex flex-col gap-4">
                         {serverProviders.map((provider) => (
-                            <Card key={provider.id} className="relative">
-                                <CardHeader className="pb-3">
-                                    <div className="flex items-start justify-between">
-                                        <div className="space-y-1">
-                                            <CardTitle className="text-lg">{provider.name}</CardTitle>
-                                            <CardDescription>
-                                                <Badge
-                                                    variant="secondary"
-                                                    className={providerTypeColors[provider.provider_type] || providerTypeColors.custom}
-                                                >
-                                                    {providerTypeLabels[provider.provider_type] || provider.provider_type}
-                                                </Badge>
-                                            </CardDescription>
+                            <Link key={provider.id} href={`/server-providers/${provider.id}`}>
+                                <Card className="cursor-pointer p-0 transition-colors hover:bg-muted/50">
+                                    <CardContent className="p-3">
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-4">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900">
+                                                    <span className="text-sm font-semibold text-blue-600 dark:text-blue-300">
+                                                        {provider.name.charAt(0).toUpperCase()}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-lg font-semibold">{provider.name}</h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {providerTypeLabels[provider.provider_type] || provider.provider_type} ·{' '}
+                                                        {provider.servers_count} servers · Added {new Date(provider.created_at).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center space-x-4">
+                                                <div className="text-right text-sm text-muted-foreground">
+                                                    <Badge variant={provider.is_active ? 'default' : 'secondary'}>
+                                                        {provider.is_active ? 'Active' : 'Inactive'}
+                                                    </Badge>
+                                                </div>
+                                                <div className="flex items-center space-x-2">
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleTestConnection(provider.id);
+                                                        }}
+                                                        disabled={testingProvider === provider.id}
+                                                    >
+                                                        <TestTube className="mr-2 h-4 w-4" />
+                                                        {testingProvider === provider.id ? 'Testing...' : 'Test'}
+                                                    </Button>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-1">
-                                            <Badge variant={provider.is_active ? 'default' : 'secondary'}>
-                                                {provider.is_active ? 'Active' : 'Inactive'}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent className="pt-0">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                            <span>Servers</span>
-                                            <span className="font-medium">{provider.servers_count}</span>
-                                        </div>
-
-                                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                            <span>Added</span>
-                                            <span className="font-medium">{new Date(provider.created_at).toLocaleDateString()}</span>
-                                        </div>
-
-                                        <div className="flex gap-2 pt-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleTestConnection(provider.id)}
-                                                disabled={testingProvider === provider.id}
-                                                className="flex-1"
-                                            >
-                                                <TestTube className="mr-1 h-3 w-3" />
-                                                {testingProvider === provider.id ? 'Testing...' : 'Test'}
-                                            </Button>
-                                            <Link href={`/server-providers/${provider.id}/edit`}>
-                                                <Button variant="outline" size="sm">
-                                                    <Edit className="h-3 w-3" />
-                                                </Button>
-                                            </Link>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => handleDelete(provider.id)}
-                                                className="text-destructive hover:text-destructive"
-                                            >
-                                                <Trash2 className="h-3 w-3" />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                                    </CardContent>
+                                </Card>
+                            </Link>
                         ))}
                     </div>
                 )}
