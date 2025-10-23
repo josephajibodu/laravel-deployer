@@ -13,6 +13,12 @@ A modern server management and deployment platform built with Laravel and React.
 - **Cron Job Scheduling**: Schedule and manage cron jobs
 - **User Management**: Multi-user support with role-based access
 
+## 🗺️ Development Roadmap
+
+For a detailed breakdown of the MVP development plan, features, and timeline, see our [**ROADMAP.md**](ROADMAP.md).
+
+The roadmap outlines 10 phases over 20 weeks to complete the MVP, covering everything from authentication and server management to deployment automation and monitoring.
+
 ## Tech Stack
 
 - **Backend**: Laravel 12.x with PHP 8.2+
